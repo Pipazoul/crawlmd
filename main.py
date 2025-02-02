@@ -40,6 +40,14 @@ def cleanData(folder_path):
             os.makedirs(f'{folder_path}/pdf')
         pdf.download_pdf(pdf_url, f'{folder_path}pdf')
 
+    # convert pdfs to markdown
+    # loop in pdf folder
+    for pdf_file in os.listdir(f'{folder_path}/pdf'):
+        print(f'Converting PDF {pdf_file}')
+        # save in parsed_pdf folder
+        if not os.path.exists(f'{folder_path}/parsed_pdf'):
+            os.makedirs(f'{folder_path}/parsed_pdf')
+        pdf.pdf_to_markdown(f'{folder_path}/pdf/{pdf_file}', f'{folder_path}/parsed_pdf')
 
 dotenv.load_dotenv()
 

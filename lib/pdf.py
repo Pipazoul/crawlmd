@@ -1,6 +1,8 @@
 import requests
 import re
 import os
+from tika import parser
+import lib.sanitize
 
 # Function to extract PDF URLs from a given text
 def extract_pdf_urls(text, domainUrl):
@@ -45,3 +47,33 @@ def download_pdf(url, save_dir):
     except Exception as e:
         print(f"Error downloading {url}: {str(e)}")
 
+
+
+def pdf_to_markdown(pdf_path, save_dir):
+    try:
+        # Parse the PDF file
+        parsed = parser.from_file(pdf_path)
+        
+        # Extract the content
+        content = parsed['content']
+
+        # Clean the content
+        content = lib.sanitize.clean_text(content)
+        
+        # Construct the output filename
+        filename = os.path.basename(pdf_path).replace('.pdf', '.md')
+        
+        # Ensure the save directory exists; create it if necessary
+        os.makedirs(save_dir, exist_ok=True)
+        
+        # Construct the full path to save the file
+        save_path = os.path.join(save_dir, filename)
+        
+        print(f"Converting: {filename}")
+        
+        # Write the content to the file
+        with open(save_path, 'w') as file:
+            file.write(content)
+            
+    except Exception as e:
+        print(f"Error converting {pdf_path}: {str(e)}")
